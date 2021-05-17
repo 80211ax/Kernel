@@ -1,0 +1,1 @@
+cmd_drivers/scsi/mvsas/mvsas.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o drivers/scsi/mvsas/mvsas.o drivers/scsi/mvsas/mv_init.o drivers/scsi/mvsas/mv_sas.o drivers/scsi/mvsas/mv_64xx.o drivers/scsi/mvsas/mv_94xx.o

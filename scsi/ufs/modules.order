@@ -1,0 +1,4 @@
+drivers/scsi/ufs/cdns-pltfrm.ko
+drivers/scsi/ufs/ufshcd-core.ko
+drivers/scsi/ufs/ufshcd-pci.ko
+drivers/scsi/ufs/ufshcd-pltfrm.ko
