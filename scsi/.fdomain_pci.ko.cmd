@@ -1,1 +1,0 @@
-cmd_drivers/scsi/fdomain_pci.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o drivers/scsi/fdomain_pci.ko drivers/scsi/fdomain_pci.o drivers/scsi/fdomain_pci.mod.o ;  true

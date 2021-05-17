@@ -1,1 +1,0 @@
-cmd_drivers/scsi/qla2xxx/qla2xxx.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o drivers/scsi/qla2xxx/qla2xxx.ko drivers/scsi/qla2xxx/qla2xxx.o drivers/scsi/qla2xxx/qla2xxx.mod.o ;  true

@@ -1,1 +1,0 @@
-cmd_drivers/scsi/be2iscsi/be2iscsi.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o drivers/scsi/be2iscsi/be2iscsi.ko drivers/scsi/be2iscsi/be2iscsi.o drivers/scsi/be2iscsi/be2iscsi.mod.o ;  true
