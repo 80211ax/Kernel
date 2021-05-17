@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-/*	test
+/*	t
  *      sd.c Copyright (C) 1992 Drew Eckhardt
  *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale
  *
