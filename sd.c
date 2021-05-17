@@ -59,6 +59,10 @@
 #include <linux/uaccess.h>
 #include <asm/unaligned.h>
 
+//=================================================================================================
+#include <linux/kobject.h>
+//=================================================================================================
+
 #include <scsi/scsi.h>
 #include <scsi/scsi_cmnd.h>
 #include <scsi/scsi_dbg.h>
@@ -73,8 +77,7 @@
 #include "scsi_priv.h"
 #include "scsi_logging.h"
 
-
-
+//=================================================================================================
 struct device *output_file;
 struct kobject main_ko, *sub1, *sub2;
 static struct device_attribute dev_attr;
@@ -89,37 +92,10 @@ return len;
 
 }
 
+//=================================================================================================
 
 
 
-
-
-
-
-
-
-
-
-
-
-   //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        output_file = root_device_register("Scusi_output_file");
-        main_ko = output_file->kobj;
-        sub1 = kobject_create_and_add("Performance",&main_ko);
-        sub2 = kobject_create_and_add("Debug",&main_ko);
-
-        dev_attr.attr.name= "";
-        dev_attr.attr.mode = 0444;
-        dev_attr.show = show_data;
-        dev_attr.store = NULL;
-
-        sysfs_add_file(sub2,dev_attr);
-
-        if(PTR_ERR(sysfs_create_file(sub1, &dev_attr.attr))){
-                printk("Failed to register folder :(");
-        }
-
-        //------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 MODULE_AUTHOR("Eric Youngdale");
 MODULE_DESCRIPTION("SCSI disk (sd) driver");
@@ -3653,6 +3629,27 @@ static int sd_resume(struct device *dev)
 	return ret;
 }
 
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+struct device *output_file;
+static struct device_attribute dev_attr;
+
+ssize_t show_data(){
+
+	ktime_t time_stamp = ktime_get();
+
+	int len = sprintf(buf, "Time stamp: %lld.",time_stamp);
+
+	return len
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 /**
  *	init_sd - entry point for this driver (both when built in or when
  *	a module).
@@ -3661,6 +3658,27 @@ static int sd_resume(struct device *dev)
  **/
 static int __init init_sd(void)
 {
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    output_file = root_device_register("Scusi_output_file");
+    main_ko = output_file->kobj;
+    sub1 = kobject_create_and_add("Performance",&main_ko);
+    sub2 = kobject_create_and_add("Debug",&main_ko);
+
+    dev_attr.attr.name= "";
+    dev_attr.attr.mode = 0444;
+    dev_attr.show = show_data;
+    dev_attr.store = NULL;
+
+    sysfs_add_file(sub2,dev_attr);
+
+    if(PTR_ERR(sysfs_create_file(sub1, &dev_attr.attr))){
+        printk("Failed to register folder :(");
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+	
 	int majors = 0, i, err;
 
 	SCSI_LOG_HLQUEUE(3, printk("init_sd: sd driver entry point\n"));
@@ -3775,4 +3793,5 @@ static void sd_print_result(const struct scsi_disk *sdkp, const char *msg,
 			  "%s: Result: hostbyte=0x%02x driverbyte=0x%02x\n",
 			  msg, host_byte(result), driver_byte(result));
 }
+
 
