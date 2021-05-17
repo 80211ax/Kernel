@@ -3632,21 +3632,6 @@ static int sd_resume(struct device *dev)
 
 
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-struct device *output_file;
-static struct device_attribute dev_attr;
-
-ssize_t show_data(){
-
-	ktime_t time_stamp = ktime_get();
-
-	int len = sprintf(buf, "Time stamp: %lld.",time_stamp);
-
-	return len
-}
-
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
