@@ -1,1 +1,0 @@
-cmd_drivers/nvme/host/nvme-tcp.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o drivers/nvme/host/nvme-tcp.ko drivers/nvme/host/nvme-tcp.o drivers/nvme/host/nvme-tcp.mod.o ;  true

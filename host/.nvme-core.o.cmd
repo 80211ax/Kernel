@@ -1,1 +1,0 @@
-cmd_drivers/nvme/host/nvme-core.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o drivers/nvme/host/nvme-core.o drivers/nvme/host/core.o drivers/nvme/host/trace.o drivers/nvme/host/multipath.o drivers/nvme/host/lightnvm.o drivers/nvme/host/fault_inject.o
