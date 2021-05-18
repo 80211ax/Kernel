@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-only
-/*	almost
+/*
  *      sd.c Copyright (C) 1992 Drew Eckhardt
  *           Copyright (C) 1993, 1994, 1995, 1999 Eric Youngdale
  *
@@ -77,6 +77,7 @@
 #include "scsi_priv.h"
 #include "scsi_logging.h"
 
+
 //=================================================================================================
 struct device *output_file;
 struct kobject main_ko, *sub1, *sub2;
@@ -93,9 +94,6 @@ return len;
 }
 
 //=================================================================================================
-
-
-
 
 MODULE_AUTHOR("Eric Youngdale");
 MODULE_DESCRIPTION("SCSI disk (sd) driver");
@@ -1190,11 +1188,12 @@ static blk_status_t sd_setup_read_write_cmnd(struct scsi_cmnd *cmd)
 	sector_t lba = sectors_to_logical(sdp, blk_rq_pos(rq));
 	sector_t threshold;
 	unsigned int nr_blocks = sectors_to_logical(sdp, blk_rq_sectors(rq));
-	bool dif, dix;
 	unsigned int mask = logical_to_sectors(sdp, 1) - 1;
 	bool write = rq_data_dir(rq) == WRITE;
 	unsigned char protect, fua;
 	blk_status_t ret;
+	unsigned int dif;
+	bool dix;
 
 	ret = scsi_init_io(cmd);
 	if (ret != BLK_STS_OK)
@@ -3629,12 +3628,6 @@ static int sd_resume(struct device *dev)
 	return ret;
 }
 
-
-
-
-
-
-
 /**
  *	init_sd - entry point for this driver (both when built in or when
  *	a module).
@@ -3643,8 +3636,10 @@ static int sd_resume(struct device *dev)
  **/
 static int __init init_sd(void)
 {
+
+
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-    output_file = root_device_register("Scusi_output_file");
+    output_file = root_device_register("Scusi_SD_file");
     main_ko = output_file->kobj;
     sub1 = kobject_create_and_add("Performance",&main_ko);
     sub2 = kobject_create_and_add("Debug",&main_ko);
@@ -3662,8 +3657,6 @@ static int __init init_sd(void)
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-	
 	int majors = 0, i, err;
 
 	SCSI_LOG_HLQUEUE(3, printk("init_sd: sd driver entry point\n"));
@@ -3778,5 +3771,4 @@ static void sd_print_result(const struct scsi_disk *sdkp, const char *msg,
 			  "%s: Result: hostbyte=0x%02x driverbyte=0x%02x\n",
 			  msg, host_byte(result), driver_byte(result));
 }
-
 

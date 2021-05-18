@@ -13,30 +13,6 @@
 #include "nvme.h"
 #include "fabrics.h"
 
-
-//=================================================================================================
-#include <linux/kobject.h>
-//=================================================================================================
-
-//=================================================================================================
-struct device *output_file;
-struct kobject main_ko, *sub1, *sub2;
-static struct device_attribute dev_attr;
-
-ssize_t show_data(struct device *dev, struct device_attribute *attr, char *buf){
-
-    ktime_t time_stamp = ktime_get();
-
-    int len = sprintf(buf, "Time stamp: %lld.",time_stamp);
-
-return len;
-
-}
-
-//=================================================================================================
-
-
-
 static LIST_HEAD(nvmf_transports);
 static DECLARE_RWSEM(nvmf_transports_rwsem);
 
@@ -1168,26 +1144,6 @@ static struct miscdevice nvmf_misc = {
 static int __init nvmf_init(void)
 {
 	int ret;
-
-	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-    output_file = root_device_register("Fabrics_Analytics");
-    main_ko = output_file->kobj;
-    sub1 = kobject_create_and_add("Performance",&main_ko);
-    sub2 = kobject_create_and_add("Debug",&main_ko);
-
-    dev_attr.attr.name= "";
-    dev_attr.attr.mode = 0444;
-    dev_attr.show = show_data;
-    dev_attr.store = NULL;
-
-    sysfs_add_file(sub2,dev_attr);
-
-    if(PTR_ERR(sysfs_create_file(sub1, &dev_attr.attr))){
-        printk("Failed to register folder :(");
-    }
-
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 	nvmf_default_host = nvmf_host_default();
 	if (!nvmf_default_host)
