@@ -85,7 +85,7 @@ static struct device_attribute dev_attr;
 
 ssize_t show_data(struct device *dev, struct device_attribute *attr, char *buf){
 
-    ktime_t time_stamp = ktime_get();
+    ktime_t time_stamp = ktime_get_real_fast_ns();
 
     int len = sprintf(buf, "Time stamp: %lld.",time_stamp);
 
@@ -125,6 +125,10 @@ MODULE_ALIAS_SCSI_DEVICE(TYPE_ZBC);
 #else
 #define SD_MINORS	0
 #endif
+
+static uint64_t scsi_rq_in;
+static uint64_t scsi_rq_out;
+static int pdu_count;
 
 static void sd_config_discard(struct scsi_disk *, unsigned int);
 static void sd_config_write_same(struct scsi_disk *);
@@ -1977,7 +1981,10 @@ static int sd_done(struct scsi_cmnd *SCpnt)
 	struct request *req = SCpnt->request;
 	int sense_valid = 0;
 	int sense_deferred = 0;
-
+        
+	scsi_rq_out = ktime_get_real_fast_ns();
+	printk("Latency for pdu %d is: %lluns",++pdu_count,(scsi_rq_out-scsi_rq_in));
+	
 	switch (req_op(req)) {
 	case REQ_OP_DISCARD:
 	case REQ_OP_WRITE_ZEROES:
@@ -3324,20 +3331,26 @@ static int sd_probe(struct device *dev)
 		goto out;
 
 	gd = alloc_disk(SD_MINORS);
+        
+	scsi_rq_in = ktime_get_real_fast_ns();
+	
 	if (!gd)
 		goto out_free;
-
+        printk("CMD_SIZE 1 is: %d\n", cmd_size);
 	index = ida_alloc(&sd_index_ida, GFP_KERNEL);
+        printk("CMD_SIZE 2 is: %d\n", cmd_size);
 	if (index < 0) {
 		sdev_printk(KERN_WARNING, sdp, "sd_probe: memory exhausted.\n");
 		goto out_put;
 	}
 
 	error = sd_format_disk_name("sd", index, gd->disk_name, DISK_NAME_LEN);
+
 	if (error) {
 		sdev_printk(KERN_WARNING, sdp, "SCSI disk (sd) name length exceeded.\n");
 		goto out_free_index;
 	}
+        printk("CMD_SIZE 3 is: %d\n", cmd_size);
 
 	sdkp->device = sdp;
 	sdkp->driver = &sd_template;
@@ -3353,11 +3366,14 @@ static int sd_probe(struct device *dev)
 			blk_queue_rq_timeout(sdp->request_queue,
 					     SD_MOD_TIMEOUT);
 	}
-
+        printk("CMD_SIZE 4 is: %d\n", cmd_size);
+        
 	device_initialize(&sdkp->dev);
 	sdkp->dev.parent = dev;
 	sdkp->dev.class = &sd_disk_class;
 	dev_set_name(&sdkp->dev, "%s", dev_name(dev));
+        
+	printk("CMD_SIZE 5 is: %d\n", cmd_size);
 
 	error = device_add(&sdkp->dev);
 	if (error)
